@@ -1,0 +1,46 @@
+services:
+    mysql:
+        container_name: mysql
+        image: mysql:8.3
+        working_dir: /application
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./docker/mysql/bookreader:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=Aa@123456
+            - MYSQL_DATABASE=bookreader
+            - MYSQL_USER=bookreader
+            - MYSQL_PASSWORD=Aa@123456
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+        expose:
+            - "3306"
+        security_opt:
+            - seccomp:unconfined
+        restart: unless-stopped
+
+    frankenphp:
+        container_name: frankenphp
+        build:
+            context: ./docker/frankenphp
+            dockerfile: ./Dockerfile
+        ports:
+            - "80:80"
+        volumes:
+            - ./:/app
+
+    mysql_test:
+        container_name: mysql_test
+        image: mysql:8.3
+        working_dir: /application
+        volumes:
+            - ./docker/mysql/testdb:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=Aa@123456
+            - MYSQL_DATABASE=testdb
+            - MYSQL_USER=test
+            - MYSQL_PASSWORD=Aa@123456
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+        security_opt:
+            - seccomp:unconfined
+        restart: unless-stopped
